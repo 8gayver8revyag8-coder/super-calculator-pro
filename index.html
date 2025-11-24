@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Super Calculator Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tabs {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: #0072ff;
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+        }
+        
+        .calculator {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .display-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .display {
+            background: #1a1a1a;
+            color: white;
+            font-size: 2.2em;
+            padding: 25px 20px;
+            text-align: right;
+            border-radius: 15px;
+            min-height: 120px;
+            word-break: break-all;
+            font-weight: 300;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+        
+        .history {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: #888;
+            font-size: 0.8em;
+            max-width: 80%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .scientific-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 18px 10px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .number {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
+        
+        .number:hover {
+            background: rgba(255,255,255,1);
+        }
+        
+        .operator {
+            background: #ff9500;
+            color: white;
+        }
+        
+        .operator:hover {
+            background: #e08500;
+        }
+        
+        .scientific {
+            background: #5ac8fa;
+            color: white;
+            font-size: 0.9em;
+        }
+        
+        .scientific:hover {
+            background: #4ab0e0;
+        }
+        
+        .equals {
+            background: #34c759;
+            color: white;
+        }
+        
+        .equals:hover {
+            background: #30b350;
+        }
+        
+        .clear {
+            background: #ff3b30;
+            color: white;
+        }
+        
+        .clear:hover {
+            background: #e0352b;
+        }
+        
+        .memory {
+            background: #af52de;
+            color: white;
+        }
+        
+        .memory:hover {
+            background: #9b48c8;
+        }
+        
+        .constant {
+            background: #ffcc00;
+            color: #333;
+        }
+        
+        .constant:hover {
+            background: #e6b800;
+        }
+        
+        .converter {
+            background: #5856d6;
+            color: white;
+        }
+        
+        .converter:hover {
+            background: #4846c6;
+        }
+        
+        .zero {
+            grid-column: span 2;
+        }
+        
+        .double-height {
+            grid-row: span 2;
+        }
+        
+        .double-width {
+            grid-column: span 2;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .sci-small {
+            font-size: 0.8em;
+            padding: 12px 5px;
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .converter-panel {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .converter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .converter-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            font-size: 1em;
+        }
+        
+        .converter-select {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            font-size: 1em;
+        }
+        
+        .converter-result {
+            padding: 15px;
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+        
+        /* Анимации */
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .celebrate {
+            animation: celebrate 0.5s ease;
+        }
+        
+        /* Темная тема */
+        .dark-theme {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+        
+        .dark-theme .calculator {
+            background: rgba(30, 30, 30, 0.95);
+        }
+        
+        .dark-theme .number {
+            background: #404040;
+            color: white;
+        }
+        
+        .dark-theme .number:hover {
+            background: #505050;
+        }
+        
+        .dark-theme .converter-input,
+        .dark-theme .converter-select {
+            background: #444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Super Calculator Pro</h1>
+            <p>10+ уникальных функций в одном!</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('basic')">Обычный</div>
+            <div class="tab" onclick="switchTab('scientific')">Научный</div>
+            <div class="tab" onclick="switchTab('converter')">Конвертер</div>
+        </div>
+        
+        <div class="calculator">
+            <!-- ОСНОВНОЙ КАЛЬКУЛЯТОР -->
+            <div id="basic-tab">
+                <div class="display-container">
+                    <div class="history" id="history"></div>
+                    <div class="display" id="display">0</div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="memory" onclick="memoryClear()">MC</button>
+                    <button class="memory" onclick="memoryRecall()">MR</button>
+                    <button class="memory" onclick="memoryAdd()">M+</button>
+                    <button class="memory" onclick="memorySubtract()">M-</button>
+                    
+                    <button class="clear" onclick="clearAll()">C</button>
+                    <button class="clear" onclick="backspace()">⌫</button>
+                    <button class="operator" onclick="appendOperator('/')">÷</button>
+                    <button class="operator" onclick="appendOperator('*')">×</button>
+                    
+                    <button class="number" onclick="appendNumber('7')">7</button>
+                    <button class="number" onclick="appendNumber('8')">8</button>
+                    <button class="number" onclick="appendNumber('9')">9</button>
+                    <button class="operator" onclick="appendOperator('-')">-</button>
+                    
+                    <button class="number" onclick="appendNumber('4')">4</button>
+                    <button class="number" onclick="appendNumber('5')">5</button>
+                    <button class="number" onclick="appendNumber('6')">6</button>
+                    <button class="operator" onclick="appendOperator('+')">+</button>
+                    
+                    <button class="number" onclick="appendNumber('1')">1</button>
+                    <button class="number" onclick="appendNumber('2')">2</button>
+                    <button class="number" onclick="appendNumber('3')">3</button>
+                    <button class="equals double-height" onclick="calculate()">=</button>
+                    
+                    <button class="number zero" onclick="appendNumber('0')">0</button>
+                    <button class="number" onclick="appendDecimal()">.</button>
+                    <button class="scientific" onclick="scientificFunction('percent')">%</button>
+                </div>
+            </div>
+            
+            <!-- НАУЧНЫЙ КАЛЬКУЛЯТОР -->
+            <div id="scientific-tab" class="hidden">
+                <div class="display-container">
+                    <div class="history" id="sci-history"></div>
+                    <div class="display" id="sci-display">0</div>
+                </div>
+                
+                <div class="scientific-buttons">
+                    <button class="scientific sci-small" onclick="scientificFunction('sqrt')">√</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('square')">x²</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('cube')">x³</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('power')">x^y</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('log')">log</button>
+                    
+                    <button class="scientific sci-small" onclick="scientificFunction('sin')">sin</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('cos')">cos</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('tan')">tan</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('factorial')">x!</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('exp')">e^x</button>
+                    
+                    <button class="constant sci-small" onclick="appendConstant('pi')">π</button>
+                    <button class="constant sci-small" onclick="appendConstant('e')">e</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('ln')">ln</button>
+                    <button class="scientific sci-small" onclick="scientificFunction('reciprocal')">1/x</button>
+                    <button class="scientific sci-small" onclick="toggleNegative()">±</button>
+                </div>
+                
+                <div class="buttons">
+                    <button class="memory" onclick="memoryClear()">MC</button>
+                    <button class="memory" onclick="memoryRecall()">MR</button>
+                    <button class="memory" onclick="memoryAdd()">M+</button>
+                    <button class="memory" onclick="memorySubtract()">M-</button>
+                    
+                    <button class="clear" onclick="clearAll()">C</button>
+                    <button class="clear" onclick="backspace()">⌫</button>
+                    <button class="operator" onclick="appendOperator('/')">÷</button>
+                    <button class="operator" onclick="appendOperator('*')">×</button>
+                    
+                    <button class="number" onclick="appendNumber('7')">7</button>
+                    <button class="number" onclick="appendNumber('8')">8</button>
+                    <button class="number" onclick="appendNumber('9')">9</button>
+                    <button class="operator" onclick="appendOperator('-')">-</button>
+                    
+                    <button class="number" onclick="appendNumber('4')">4</button>
+                    <button class="number" onclick="appendNumber('5')">5</button>
+                    <button class="number" onclick="appendNumber('6')">6</button>
+                    <button class="operator" onclick="appendOperator('+')">+</button>
+                    
+                    <button class="number" onclick="appendNumber('1')">1</button>
+                    <button class="number" onclick="appendNumber('2')">2</button>
+                    <button class="number" onclick="appendNumber('3')">3</button>
+                    <button class="equals double-height" onclick="calculate()">=</button>
+                    
+                    <button class="number zero" onclick="appendNumber('0')">0</button>
+                    <button class="number" onclick="appendDecimal()">.</button>
+                    <button class="scientific" onclick="scientificFunction('percent')">%</button>
+                </div>
+            </div>
+            
+            <!-- КОНВЕРТЕР ЕДИНИЦ -->
+            <div id="converter-tab" class="hidden">
+                <div class="converter-panel">
+                    <h3>📏 Конвертер длины</h3>
+                    <div class="converter-row">
+                        <input type="number" class="converter-input" id="length-value" value="1" step="0.01">
+                        <select class="converter-select" id="length-from">
+                            <option value="mm">Миллиметры</option>
+                            <option value="cm">Сантиметры</option>
+                            <option value="m" selected>Метры</option>
+                            <option value="km">Километры</option>
+                            <option value="in">Дюймы</option>
+                            <option value="ft">Футы</option>
+                        </select>
+                    </div>
+                    <div class="converter-row">
+                        <select class="converter-select" id="length-to">
+                            <option value="mm">Миллиметры</option>
+                            <option value="cm">Сантиметры</option>
+                            <option value="m">Метры</option>
+                            <option value="km" selected>Километры</option>
+                            <option value="in">Дюймы</option>
+                            <option value="ft">Футы</option>
+                        </select>
+                    </div>
+                    <button class="converter double-width" onclick="convertLength()">Конвертировать длину</button>
+                    <div class="converter-result" id="length-result">1 метр = 0.001 км</div>
+                </div>
+                
+                <div class="converter-panel">
+                    <h3>⚖️ Конвертер веса</h3>
+                    <div class="converter-row">
+                        <input type="number" class="converter-input" id="weight-value" value="1" step="0.01">
+                        <select class="converter-select" id="weight-from">
+                            <option value="g">Граммы</option>
+                            <option value="kg" selected>Килограммы</option>
+                            <option value="t">Тонны</option>
+                            <option value="oz">Унции</option>
+                            <option value="lb">Фунты</option>
+                        </select>
+                    </div>
+                    <div class="converter-row">
+                        <select class="converter-select" id="weight-to">
+                            <option value="g" selected>Граммы</option>
+                            <option value="kg">Килограммы</option>
+                            <option value="t">Тонны</option>
+                            <option value="oz">Унции</option>
+                            <option value="lb">Фунты</option>
+                        </select>
+                    </div>
+                    <button class="converter double-width" onclick="convertWeight()">Конвертировать вес</button>
+                    <div class="converter-result" id="weight-result">1 кг = 1000 г</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ОСНОВНЫЕ ПЕРЕМЕННЫЕ
+        let currentInput = '0';
+        let previousValue = 0;
+        let currentOperator = '';
+        let shouldReset = false;
+        let memory = 0;
+        let isDarkTheme = false;
+        let currentTab = 'basic';
+
+        // 10+ ФИЧЕЙ:
+
+        // 1. ПАМЯТЬ КАЛЬКУЛЯТОРА
+        function memoryClear() { memory = 0; celebrate(); }
+        function memoryRecall() { currentInput = memory.toString(); updateDisplay(); celebrate(); }
+        function memoryAdd() { memory += parseFloat(currentInput || 0); celebrate(); }
+        function memorySubtract() { memory -= parseFloat(currentInput || 0); celebrate(); }
+
+        // 2. НАУЧНЫЕ ФУНКЦИИ
+        function scientificFunction(func) {
+            const current = parseFloat(currentInput);
+            let result;
+            
+            switch(func) {
+                case 'sqrt': result = Math.sqrt(current); break;
+                case 'square': result = Math.pow(current, 2); break;
+                case 'cube': result = Math.pow(current, 3); break;
+                case 'power': previousValue = current; currentOperator = '^'; shouldReset = true; return;
+                case 'log': result = Math.log10(current); break;
+                case 'sin': result = Math.sin(current * Math.PI / 180); break;
+                case 'cos': result = Math.cos(current * Math.PI / 180); break;
+                case 'tan': result = Math.tan(current * Math.PI / 180); break;
+                case 'factorial': result = factorial(current); break;
+                case 'exp': result = Math.exp(current); break;
+                case 'ln': result = Math.log(current); break;
+                case 'reciprocal': result = 1 / current; break;
+                case 'percent': result = current / 100; break;
+            }
+            
+            currentInput = result.toString();
+            updateDisplay();
+            celebrate();
+        }
+
+        function factorial(n) {
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) result *= i;
+            return result;
+        }
+
+        // 3. КОНСТАНТЫ
+        function appendConstant(constant) {
+            currentInput = constant === 'pi' ? Math.PI.toString() : Math.E.toString();
+            updateDisplay();
+            celebrate();
+        }
+
+        // 4. СМЕНА ЗНАКА
+        function toggleNegative() {
+            currentInput = currentInput.startsWith('-') ? currentInput.substring(1) : '-' + currentInput;
+            updateDisplay();
+        }
+
+        // 5. КОНВЕРТЕР ЕДИНИЦ
+        function convertLength() {
+            const value = parseFloat(document.getElementById('length-value').value);
+            const from = document.getElementById('length-from').value;
+            const to = document.getElementById('length-to').value;
+            
+            const factors = { mm: 0.001, cm: 0.01, m: 1, km: 1000, in: 0.0254, ft: 0.3048 };
+            const result = (value * factors[from]) / factors[to];
+            
+            document.getElementById('length-result').textContent = 
+                `${value} ${getUnitName(from)} = ${result.toFixed(6)} ${getUnitName(to)}`;
+            celebrate();
+        }
+
+        function convertWeight() {
+            const value = parseFloat(document.getElementById('weight-value').value);
+            const from = document.getElementById('weight-from').value;
+            const to = document.getElementById('weight-to').value;
+            
+            const factors = { g: 0.001, kg: 1, t: 1000, oz: 0.02835, lb: 0.4536 };
+            const result = (value * factors[from]) / factors[to];
+            
+            document.getElementById('weight-result').textContent = 
+                `${value} ${getUnitName(from)} = ${result.toFixed(6)} ${getUnitName(to)}`;
+            celebrate();
+        }
+
+        function getUnitName(unit) {
+            const names = { mm: 'мм', cm: 'см', m: 'м', km: 'км', in: 'дюйм', ft: 'фут', g: 'г', kg: 'кг', t: 'т', oz: 'унц', lb: 'фунт' };
+            return names[unit];
+        }
+
+        // 6. СИСТЕМА ВКЛАДОК
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('basic-tab').classList.add('hidden');
+            document.getElementById('scientific-tab').classList.add('hidden');
+            document.getElementById('converter-tab').classList.add('hidden');
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+        }
+
+        // 7. ТЕМНАЯ ТЕМА
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('dark-theme', isDarkTheme);
+            celebrate();
+        }
+
+        // 8. ИСТОРИЯ ВЫЧИСЛЕНИЙ
+        function updateHistory(operation) {
+            const historyElement = document.getElementById(currentTab === 'scientific' ? 'sci-history' : 'history');
+            historyElement.textContent = operation;
+        }
+
+        // 9. АНИМАЦИИ И ВИБРАЦИЯ
+        function celebrate() {
+            const display = document.getElementById(currentTab === 'scientific' ? 'sci-display' : 'display');
+            display.classList.add('celebrate');
+            setTimeout(() => display.classList.remove('celebrate'), 500);
+            
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
+
+        // 10. ОБНОВЛЕНИЕ ДИСПЛЕЯ
+        function updateDisplay() {
+            const display = document.getElementById(currentTab === 'scientific' ? 'sci-display' : 'display');
+            display.textContent = currentInput;
+        }
+
+        // ОСНОВНЫЕ ФУНКЦИИ КАЛЬКУЛЯТОРА
+        function appendNumber(num) {
+            if (shouldReset) { currentInput = ''; shouldReset = false; }
+            currentInput = currentInput === '0' || currentInput === 'Ошибка' ? num : currentInput + num;
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (shouldReset) { currentInput = '0'; shouldReset = false; }
+            if (!currentInput.includes('.')) currentInput += '.';
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            if (currentInput !== '' && currentInput !== 'Ошибка') {
+                if (currentOperator !== '') calculate();
+                previousValue = parseFloat(currentInput);
+                currentOperator = op;
+                updateHistory(previousValue + ' ' + op);
+                shouldReset = true;
+            }
+        }
+
+        function calculate() {
+            if (currentOperator === '' || currentInput === '' || currentInput === 'Ошибка') return;
+            
+            const currentValue = parseFloat(currentInput);
+            let result;
+            
+            switch(currentOperator) {
+                case '+': result = previousValue + currentValue; break;
+                case '-': result = previousValue - currentValue; break;
+                case '*': result = previousValue * currentValue; break;
+                case '/': result = currentValue === 0 ? 'Ошибка' : previousValue / currentValue; break;
+                case '^': result = Math.pow(previousValue, currentValue); break;
+            }
+            
+            if (result === 'Ошибка') {
+                currentInput = result;
+                updateHistory('');
+            } else {
+                currentInput = result.toString();
+                updateHistory(previousValue + ' ' + currentOperator + ' ' + currentValue + ' =');
+            }
+            
+            currentOperator = '';
+            shouldReset = true;
+            updateDisplay();
+            celebrate();
+        }
+
+        function clearAll() {
+            currentInput = '0';
+            previousValue = 0;
+            currentOperator = '';
+            shouldReset = false;
+            updateHistory('');
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentInput.length > 1 && currentInput !== 'Ошибка') {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        // ВИШЕНКА: ГОЛОСОВОЙ ВВОД
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'ru-RU';
+                
+                recognition.onresult = function(event) {
+                    const speechResult = event.results[0][0].transcript;
+                    processVoiceCommand(speechResult);
+                };
+                
+                recognition.start();
+                celebrate();
+            } else {
+                alert('Голосовой ввод не поддерживается в вашем браузере');
+            }
+        }
+
+        function processVoiceCommand(command) {
+            const numbers = command.match(/\d+/g);
+            const operators = command.match(/плюс|минус|умножить|делить/gi);
+            
+            if (numbers && operators) {
+                const num1 = parseInt(numbers[0]);
+                const num2 = parseInt(numbers[1]);
+                let operator = '';
+                
+                if (operators[0].toLowerCase().includes('плюс')) operator = '+';
+                else if (operators[0].toLowerCase().includes('минус')) operator = '-';
+                else if (operators[0].toLowerCase().includes('умножить')) operator = '*';
+                else if (operators[0].toLowerCase().includes('делить')) operator = '/';
+                
+                previousValue = num1;
+                currentInput = num2.toString();
+                currentOperator = operator;
+                calculate();
+            }
+        }
+
+        // Добавляем кнопку голосового ввода
+        document.addEventListener('DOMContentLoaded', function() {
+            const basicButtons = document.querySelector('#basic-tab .buttons');
+            const voiceButton = document.createElement('button');
+            voiceButton.className = 'converter';
+            voiceButton.textContent = '🎤';
+            voiceButton.onclick = startVoiceInput;
+            voiceButton.title = 'Голосовой ввод';
+            basicButtons.appendChild(voiceButton);
+        });
+
+        // Поддержка клавиатуры
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (key >= '0' && key <= '9') appendNumber(key);
+            else if (key === '.') appendDecimal();
+            else if (['+', '-', '*', '/'].includes(key)) appendOperator(key);
+            else if (key === 'Enter' || key === '=') { event.preventDefault(); calculate(); }
+            else if (key === 'Escape' || key === 'c') clearAll();
+            else if (key === 'Backspace') backspace();
+        });
+    </script>
+</body>
+</html>
