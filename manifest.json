@@ -1,4 +1,13 @@
 {
+  "id": "/super-calculator-pro/",
+  "name": "Super Calculator Pro",
+  "short_name": "Calc Pro",
+  "description": "Мощный калькулятор с голосовым управлением и 10+ функциями",
+  "start_url": "/super-calculator-pro/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0072ff",
+  "background_color": "#0f0c29",
   "icons": [
     {
       "src": "assets/icon-192.png",
@@ -7,8 +16,26 @@
     },
     {
       "src": "assets/icon-512.png",
-      "sizes": "512x512",
+      "sizes": "512x512", 
       "type": "image/png"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Основной калькулятор"
+    },
+    {
+      "src": "assets/screenshot-2.png", 
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Научный режим"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "ru"
 }
