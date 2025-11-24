@@ -786,5 +786,19 @@
         });
         // ==================== КОНЕЦ PWA КОДА ====================
     </script>
+    <script>
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/super-calculator-pro/service-worker.js')
+      .then(function(registration) {
+        console.log('ServiceWorker зарегистрирован');
+      })
+      .catch(function(error) {
+        console.log('Ошибка ServiceWorker:', error);
+      });
+  });
+}
+</script>
 </body>
 </html>
