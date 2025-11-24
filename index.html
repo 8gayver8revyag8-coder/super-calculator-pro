@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <title>Super Calculator Pro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- PWA META TAGS -->
+    <meta name="theme-color" content="#0072ff">
+    <meta name="description" content="Мощный калькулятор с голосовым управлением">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png">
+    
+    <!-- iOS META TAGS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Calc Pro">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
     <style>
         * {
             margin: 0;
@@ -751,6 +764,27 @@
             else if (key === 'Escape' || key === 'c') clearAll();
             else if (key === 'Backspace') backspace();
         });
+
+        // ==================== PWA КОД ====================
+        // Service Worker регистрация
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker зарегистрирован');
+                    })
+                    .catch(function(error) {
+                        console.log('Ошибка регистрации ServiceWorker:', error);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            console.log('PWA можно установить');
+        });
+        // ==================== КОНЕЦ PWA КОДА ====================
     </script>
 </body>
 </html>
