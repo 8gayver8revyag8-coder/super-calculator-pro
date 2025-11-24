@@ -1,10 +1,8 @@
-const CACHE_NAME = 'calculator-v3.0.0';
+const CACHE_NAME = 'calculator-final';
 const urlsToCache = [
   '/super-calculator-pro/',
   '/super-calculator-pro/index.html',
-  '/super-calculator-pro/manifest.json',
-  '/super-calculator-pro/icon192.webp',
-  '/super-calculator-pro/icon512.webp'
+  '/super-calculator-pro/manifest.json'
 ];
 
 self.addEventListener('install', function(event) {
