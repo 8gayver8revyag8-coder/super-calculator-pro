@@ -258,18 +258,18 @@
         
         .converter-row {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 10px;
-            align-items: center;
         }
         
         .converter-input {
-            flex: 1;
             padding: 12px;
             border: none;
             border-radius: 8px;
             background: rgba(255,255,255,0.9);
             font-size: 1em;
+            width: 100%;
         }
         
         .converter-select {
@@ -278,6 +278,7 @@
             border-radius: 8px;
             background: rgba(255,255,255,0.9);
             font-size: 1em;
+            width: 100%;
         }
         
         .converter-result {
@@ -288,6 +289,7 @@
             font-size: 1.1em;
             font-weight: 500;
             margin-top: 10px;
+            word-break: break-word;
         }
         
         /* Анимации */
@@ -323,6 +325,28 @@
         .dark-theme .converter-select {
             background: #444;
             color: white;
+        }
+
+        /* Адаптивность для конвертера */
+        @media (max-width: 480px) {
+            .converter-panel {
+                padding: 10px;
+            }
+            
+            .converter-input,
+            .converter-select {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            
+            .converter-result {
+                padding: 12px;
+                font-size: 1em;
+            }
+            
+            .scientific-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
     </style>
 </head>
@@ -445,7 +469,7 @@
                 <div class="converter-panel">
                     <h3>📏 Конвертер длины</h3>
                     <div class="converter-row">
-                        <input type="number" class="converter-input" id="length-value" value="1" step="0.01">
+                        <input type="number" class="converter-input" id="length-value" value="1" step="0.01" placeholder="Введите значение">
                         <select class="converter-select" id="length-from">
                             <option value="mm">Миллиметры</option>
                             <option value="cm">Сантиметры</option>
@@ -454,8 +478,6 @@
                             <option value="in">Дюймы</option>
                             <option value="ft">Футы</option>
                         </select>
-                    </div>
-                    <div class="converter-row">
                         <select class="converter-select" id="length-to">
                             <option value="mm">Миллиметры</option>
                             <option value="cm">Сантиметры</option>
@@ -472,7 +494,7 @@
                 <div class="converter-panel">
                     <h3>⚖️ Конвертер веса</h3>
                     <div class="converter-row">
-                        <input type="number" class="converter-input" id="weight-value" value="1" step="0.01">
+                        <input type="number" class="converter-input" id="weight-value" value="1" step="0.01" placeholder="Введите значение">
                         <select class="converter-select" id="weight-from">
                             <option value="g">Граммы</option>
                             <option value="kg" selected>Килограммы</option>
@@ -480,8 +502,6 @@
                             <option value="oz">Унции</option>
                             <option value="lb">Фунты</option>
                         </select>
-                    </div>
-                    <div class="converter-row">
                         <select class="converter-select" id="weight-to">
                             <option value="g" selected>Граммы</option>
                             <option value="kg">Килограммы</option>
@@ -786,19 +806,5 @@
         });
         // ==================== КОНЕЦ PWA КОДА ====================
     </script>
-    <script>
-// PWA Service Worker Registration
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/super-calculator-pro/service-worker.js')
-      .then(function(registration) {
-        console.log('ServiceWorker зарегистрирован');
-      })
-      .catch(function(error) {
-        console.log('Ошибка ServiceWorker:', error);
-      });
-  });
-}
-</script>
 </body>
 </html>
